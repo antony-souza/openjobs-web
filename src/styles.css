@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+
+@layer base {
+  body {
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+  button,
+  a,
+  input,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid #2378e8;
+    outline-offset: 3px;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+  }
+}
+@layer components {
+  .oj-card {
+    @apply rounded-xl border border-[#e3e9f2] bg-white shadow-[0_2px_5px_rgba(18,39,69,.02)];
+  }
+  .oj-button {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#1769d5] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0e58bd] disabled:cursor-wait disabled:opacity-60;
+  }
+  .oj-toplink {
+    @apply flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-[#53657d] hover:bg-[#edf5ff] hover:text-[#1769d5];
+  }
+  .oj-input {
+    @apply w-full rounded-lg border border-[#d8e2ee] bg-white px-4 py-3 text-sm text-[#142743] outline-none transition placeholder:text-[#91a0b4] focus:border-[#2378e8] focus:ring-4 focus:ring-[#2378e8]/10;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

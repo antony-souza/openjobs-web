@@ -5,8 +5,11 @@ import {
   AtSign,
   Camera,
   CheckCircle2,
+  Eye,
+  EyeOff,
   ImagePlus,
   LoaderCircle,
+  LockKeyhole,
   Mail,
   ShieldCheck,
   Trash2,
@@ -37,6 +40,8 @@ function ProfileEditor({ profile }: { profile: Profile }) {
   const [name, setName] = useState(profile.name)
   const [email, setEmail] = useState(profile.email)
   const [username, setUsername] = useState(profile.username)
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [removeAvatar, setRemoveAvatar] = useState(false)
@@ -59,6 +64,7 @@ function ProfileEditor({ profile }: { profile: Profile }) {
       form.set('email', email.trim())
       form.set('username', username.trim())
       form.set('removeAvatar', String(removeAvatar))
+      if (password.trim()) form.set('password', password)
       if (file) form.set('avatar', file)
       return updateProfile(form)
     },
@@ -69,6 +75,8 @@ function ProfileEditor({ profile }: { profile: Profile }) {
       setName(updated.name)
       setEmail(updated.email)
       setUsername(updated.username)
+      setPassword('')
+      setShowPassword(false)
       setFile(null)
       setRemoveAvatar(false)
       if (fileInput.current) fileInput.current.value = ''
@@ -268,8 +276,58 @@ function ProfileEditor({ profile }: { profile: Profile }) {
                 Você usa esse e-mail para entrar na sua conta.
               </p>
             </div>
+            <div>
+              <label
+                className="mb-2 block text-sm font-semibold"
+                htmlFor="profile-password"
+              >
+                Nova senha{' '}
+                <span className="font-normal text-[#8392a8]">(opcional)</span>
+              </label>
+              <div className="relative">
+                <LockKeyhole className="absolute top-3.5 left-4 size-[18px] text-[#8392a8]" />
+                <input
+                  id="profile-password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  className="oj-input !pr-12 !pl-11"
+                  placeholder="Digite uma nova senha"
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.target.value)
+                    save.reset()
+                  }}
+                  minLength={6}
+                  maxLength={72}
+                  aria-describedby="profile-password-help"
+                  disabled={save.isPending}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex w-12 cursor-pointer items-center justify-center rounded-r-lg text-[#8392a8] hover:text-[#1769d5]"
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  aria-pressed={showPassword}
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={save.isPending}
+                >
+                  {showPassword ? (
+                    <EyeOff className="size-[18px]" />
+                  ) : (
+                    <Eye className="size-[18px]" />
+                  )}
+                </button>
+              </div>
+              <p
+                id="profile-password-help"
+                className="mt-1.5 text-[11px] text-[#8392a8]"
+              >
+                Deixe este campo vazio para manter sua senha atual. Para
+                alterar, use de 6 a 72 caracteres.
+              </p>
+            </div>
           </section>
-          <footer className="border-t border-[#e5ebf3] bg-[#fafbfd] p-6 sm:px-8">
+          <footer className="flex flex-col items-end border-t border-[#e5ebf3] bg-[#fafbfd] p-6 sm:px-8">
             {(save.error || fileError) && (
               <p role="alert" className="mb-4 text-sm text-[#bd3845]">
                 {fileError ?? save.error?.message}
@@ -285,7 +343,7 @@ function ProfileEditor({ profile }: { profile: Profile }) {
               </p>
             )}
             <button
-              className="oj-button w-full sm:w-auto"
+              className="oj-button"
               disabled={save.isPending || !!fileError}
               type="submit"
             >

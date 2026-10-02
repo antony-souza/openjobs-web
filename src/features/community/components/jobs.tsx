@@ -43,7 +43,7 @@ export function Modal({
       onClick={(event) => {
         if (event.target === event.currentTarget) close()
       }}
-      className="fixed inset-0 m-auto max-h-[90dvh] w-[min(640px,calc(100%-32px))] overflow-y-auto rounded-2xl border border-[#e3e9f2] bg-white p-0 text-[#142743] shadow-2xl backdrop:bg-[#0b2245]/50"
+      className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%_-_32px)] max-w-[640px] overflow-y-auto rounded-2xl border border-[#e3e9f2] bg-white p-0 text-[#142743] shadow-2xl backdrop:bg-[#0b2245]/50"
     >
       <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-[#e3e9f2] bg-white px-6 py-5">
         <h2 id={titleId} className="text-lg font-bold">
@@ -100,7 +100,7 @@ export function LatestJobs({ openAll }: { openAll: () => void }) {
           <button
             key={job.id}
             onClick={() => setSelected(job)}
-            className="group -mx-2 flex w-[calc(100%+16px)] cursor-pointer items-start gap-3 rounded-lg border-b border-[#edf0f6] px-2 py-4 text-left last:border-0 hover:bg-[#f7faff]"
+            className="group -mx-2 flex w-[calc(100%_+_16px)] cursor-pointer items-start gap-3 rounded-lg border-b border-[#edf0f6] px-2 py-4 text-left last:border-0 hover:bg-[#f7faff]"
           >
             <Avatar
               name={job.publishedBy.name}

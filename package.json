@@ -6,6 +6,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
+    "brand:prepare": "node scripts/prepare-brand-assets.mjs",
     "dev": "vite dev --port 3000",
     "generate-routes": "tsr generate",
     "build": "vite build",
@@ -40,6 +41,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9.20.0",
     "prettier": "^3.8.1",
+    "sharp": "0.34.5",
     "typescript": "^6.0.2",
     "vite": "^8.0.0"
   },

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Search, Sparkles } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useState } from 'react'
 import loginHero from '../assets/login-hero.png'
 import { AppShell } from '../features/community/components/app-shell'

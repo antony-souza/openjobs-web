@@ -77,24 +77,8 @@ export function LatestJobs({ openAll }: { openAll: () => void }) {
             Ver todas
           </button>
         </div>
-        <p className="mb-4 text-[11px] text-[#8392a8]">
-          As 3 oportunidades mais recentes
-        </p>
         {jobs.isPending && (
           <div className="h-52 animate-pulse rounded bg-[#edf2f8]" />
-        )}
-        {jobs.isError && (
-          <div>
-            <p role="alert" className="text-xs text-[#bd3845]">
-              {jobs.error.message}
-            </p>
-            <button
-              className="mt-3 text-xs text-[#1769d5]"
-              onClick={() => void jobs.refetch()}
-            >
-              Tentar novamente
-            </button>
-          </div>
         )}
         {jobs.data?.items.map((job) => (
           <button
@@ -123,7 +107,7 @@ export function LatestJobs({ openAll }: { openAll: () => void }) {
             </div>
           </button>
         ))}
-        {jobs.data?.items.length === 0 && (
+        {!jobs.isPending && !jobs.data?.items.length && (
           <p className="py-5 text-sm leading-relaxed text-[#71819a]">
             As novas vagas aparecerão aqui assim que forem publicadas.
           </p>

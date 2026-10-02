@@ -138,6 +138,8 @@ export function Feed({ profile }: { profile: Profile }) {
   )
 }
 
+const POST_CONTENT_MAX_LENGTH = 3000
+
 function PostComposer({
   profile,
   onPublished,
@@ -150,6 +152,7 @@ function PostComposer({
   const [preview, setPreview] = useState<string | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   useEffect(() => {
     if (!file) {
       setPreview(null)
@@ -170,6 +173,10 @@ function PostComposer({
       setContent('')
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
+      if (textareaRef.current) {
+        textareaRef.current.style.removeProperty('height')
+        textareaRef.current.style.removeProperty('width')
+      }
       onPublished()
     },
   })
@@ -188,15 +195,26 @@ function PostComposer({
           Escreva uma publicação
         </label>
         <textarea
+          ref={textareaRef}
           id="post-content"
           value={content}
           onChange={(event) => setContent(event.target.value)}
           placeholder={`O que você quer compartilhar, ${profile.name.split(' ')[0]}?`}
-          maxLength={1000}
+          maxLength={POST_CONTENT_MAX_LENGTH}
+          aria-describedby="post-content-limit"
           required
-          className="min-h-[85px] w-full resize-y rounded-lg bg-[#f6f8fc] px-4 py-3 text-sm outline-none placeholder:text-[#8392a8] focus:ring-2 focus:ring-[#2378e8]/30"
+          disabled={publish.isPending}
+          rows={5}
+          className="min-h-[140px] w-full resize-y rounded-lg bg-[#f6f8fc] px-4 py-3 text-sm outline-none placeholder:text-[#8392a8] focus:ring-2 focus:ring-[#2378e8]/30"
         />
       </div>
+      <p
+        id="post-content-limit"
+        className={`mt-2 text-right text-xs ${content.length >= POST_CONTENT_MAX_LENGTH ? 'font-medium text-[#bd3845]' : 'text-[#8392a8]'}`}
+      >
+        {content.length.toLocaleString('pt-BR')} /{' '}
+        {POST_CONTENT_MAX_LENGTH.toLocaleString('pt-BR')} caracteres
+      </p>
       {preview && (
         <div className="relative mt-4">
           <img

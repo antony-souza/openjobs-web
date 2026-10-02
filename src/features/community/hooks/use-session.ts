@@ -3,8 +3,9 @@ import { useNavigate } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiError, getProfile } from '../services/community-service'
 
-export function useSession() {
+export function useSession({ required = true }: { required?: boolean } = {}) {
   const [ready, setReady] = useState(false)
+  const [checked, setChecked] = useState(false)
   const navigate = useNavigate()
   const client = useQueryClient()
   const profile = useQuery({
@@ -14,19 +15,24 @@ export function useSession() {
     retry: false,
   })
   useEffect(() => {
+    setChecked(true)
     if (!localStorage.getItem('openjobs:token')) {
-      void navigate({ to: '/' })
+      if (required) void navigate({ to: '/' })
       return
     }
     setReady(true)
-  }, [navigate])
+  }, [navigate, required])
   useEffect(() => {
-    if (profile.error instanceof ApiError && profile.error.status === 401) {
+    if (
+      profile.error instanceof ApiError &&
+      (profile.error.status === 401 || profile.error.status === 403)
+    ) {
       localStorage.removeItem('openjobs:token')
       client.clear()
-      void navigate({ to: '/' })
+      setReady(false)
+      if (required) void navigate({ to: '/' })
     }
-  }, [profile.error, client, navigate])
+  }, [profile.error, client, navigate, required])
 
   function signOut() {
     localStorage.removeItem('openjobs:token')
@@ -34,9 +40,9 @@ export function useSession() {
     void navigate({ to: '/' })
   }
   return {
-    profile: profile.data,
+    profile: ready ? profile.data : undefined,
     error: profile.error,
-    loading: !ready || profile.isPending,
+    loading: !checked || (ready && profile.isPending),
     retry: profile.refetch,
     signOut,
   }

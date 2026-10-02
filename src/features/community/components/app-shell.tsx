@@ -20,6 +20,7 @@ import { getMenu } from '../services/community-service'
 import type { MenuItem } from '../services/community-service'
 import { Brand } from '../../auth/components/brand'
 import { Avatar } from './avatar'
+import { ProfileCover } from './profile-cover'
 
 const defaultMenus: MenuItem[] = [
   { title: 'Início', iconName: 'Home', path: '/home' },
@@ -175,12 +176,12 @@ export function AppShell({
           className={`${mobileMenu ? 'block' : 'hidden'} space-y-4 lg:sticky lg:top-[100px] lg:block`}
         >
           <div className="oj-card overflow-hidden">
-            <div className="h-16 bg-[linear-gradient(120deg,#dceaff,#edf7ff)]" />
+            <ProfileCover url={profile.coverUrl} className="h-24" />
             <div className="px-5 pb-5">
               <Avatar
                 name={profile.name}
                 url={profile.avatarUrl}
-                className="-mt-8 size-[68px] text-xl ring-4"
+                className="relative z-10 -mt-8 size-[68px] text-xl ring-4"
               />
               <h2 className="mt-3 truncate font-bold">{profile.name}</h2>
               <p className="mt-1 text-sm text-[#71819a]">@{profile.username}</p>

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as PUsernameRouteImport } from './routes/p.$username'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const PerfilRoute = PerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PUsernameRoute = PUsernameRouteImport.update({
+  id: '/p/$username',
+  path: '/p/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
   '/home': typeof HomeRoute
   '/perfil': typeof PerfilRoute
+  '/p/$username': typeof PUsernameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
   '/home': typeof HomeRoute
   '/perfil': typeof PerfilRoute
+  '/p/$username': typeof PUsernameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/home': typeof HomeRoute
   '/perfil': typeof PerfilRoute
+  '/p/$username': typeof PUsernameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cadastro' | '/home' | '/perfil'
+  fullPaths: '/' | '/cadastro' | '/home' | '/perfil' | '/p/$username'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cadastro' | '/home' | '/perfil'
-  id: '__root__' | '/' | '/cadastro' | '/home' | '/perfil'
+  to: '/' | '/cadastro' | '/home' | '/perfil' | '/p/$username'
+  id: '__root__' | '/' | '/cadastro' | '/home' | '/perfil' | '/p/$username'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +76,7 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   HomeRoute: typeof HomeRoute
   PerfilRoute: typeof PerfilRoute
+  PUsernameRoute: typeof PUsernameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerfilRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/$username': {
+      id: '/p/$username'
+      path: '/p/$username'
+      fullPath: '/p/$username'
+      preLoaderRoute: typeof PUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   HomeRoute: HomeRoute,
   PerfilRoute: PerfilRoute,
+  PUsernameRoute: PUsernameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

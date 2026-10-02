@@ -7,7 +7,24 @@ export interface Author {
   username: string
   avatarUrl: string | null
 }
+export interface PublicProfile extends Author {
+  coverUrl: string | null
+  role: string
+  headline: string | null
+  bio: string | null
+  location: string | null
+  portfolioUrl: string | null
+  linkedinUrl: string | null
+  joinedAt: string
+  postsCount: number
+}
 export interface Profile extends Author {
+  coverUrl: string | null
+  headline: string | null
+  bio: string | null
+  location: string | null
+  portfolioUrl: string | null
+  linkedinUrl: string | null
   email: string
   role: string
 }
@@ -28,6 +45,10 @@ export interface Post {
   liked: boolean
 }
 export interface Comment {
+  parentCommentId: string | null
+  repliesCount: number
+  likesCount: number
+  liked: boolean
   id: string
   content: string
   createdAt: string
@@ -88,6 +109,13 @@ async function request<T>(
   }
 }
 
+export const getPublicProfile = (username: string) =>
+  request<PublicProfile>('get', `/v1/profiles/${encodeURIComponent(username)}`)
+export const getPublicPosts = (username: string, page: number) =>
+  request<Page<Post>>(
+    'get',
+    `/v1/profiles/${encodeURIComponent(username)}/posts?page=${page}`,
+  )
 export const getProfile = () => request<Profile>('get', '/v1/users/me')
 export const updateProfile = (form: FormData) =>
   request<Profile>('put', '/v1/users/me', form)
@@ -107,10 +135,59 @@ export const getComments = (postId: string, page: number) =>
     'get',
     `/v1/community/posts/${postId}/comments?page=${page}`,
   )
-export const createComment = (postId: string, content: string) =>
+export const createComment = (
+  postId: string,
+  content: string,
+  parentCommentId?: string,
+) =>
   request<Comment>('post', `/v1/community/posts/${postId}/comments`, {
     content,
+    parentCommentId,
   })
+export const getReplies = (postId: string, commentId: string, page: number) =>
+  request<Page<Comment>>(
+    'get',
+    `/v1/community/posts/${postId}/comments/${commentId}/replies?page=${page}`,
+  )
+export const updateComment = (
+  postId: string,
+  commentId: string,
+  content: string,
+) =>
+  request<{ message: string }>(
+    'put',
+    `/v1/community/posts/${postId}/comments/${commentId}`,
+    { content },
+  )
+export const deleteComment = (postId: string, commentId: string) =>
+  request<{ message: string }>(
+    'delete',
+    `/v1/community/posts/${postId}/comments/${commentId}`,
+  )
+export const setCommentLike = (
+  postId: string,
+  commentId: string,
+  liked: boolean,
+) =>
+  request<{ liked: boolean }>(
+    'put',
+    `/v1/community/posts/${postId}/comments/${commentId}/like`,
+    { liked },
+  )
+export const getPostLikes = (postId: string, page: number) =>
+  request<Page<Author>>(
+    'get',
+    `/v1/community/posts/${postId}/likes?page=${page}`,
+  )
+export const getCommentLikes = (
+  postId: string,
+  commentId: string,
+  page: number,
+) =>
+  request<Page<Author>>(
+    'get',
+    `/v1/community/posts/${postId}/comments/${commentId}/likes?page=${page}`,
+  )
 export const setLike = (postId: string, liked: boolean) =>
   request<{ liked: boolean }>('put', `/v1/community/posts/${postId}/like`, {
     liked,
@@ -123,11 +200,14 @@ export const getJobs = (page = 0, search = '', size = 3) =>
 export const applyForJob = (jobId: string) =>
   request<{ message: string }>('post', '/v1/applications', { jobId })
 
-export function timeAgo(date: string) {
-  const elapsed = Math.max(0, Date.now() - new Date(date).getTime())
-  const minutes = Math.floor(elapsed / 60000)
-  if (minutes < 1) return 'Agora'
+export function timeAgo(date: string, now = Date.now()) {
+  const elapsed = Math.max(0, now - new Date(date).getTime())
+  if (!Number.isFinite(elapsed)) return 'Data indisponível'
+  const seconds = Math.floor(elapsed / 1000)
+  if (seconds < 60) return `há ${seconds} s`
+  const minutes = Math.floor(seconds / 60)
   if (minutes < 60) return `há ${minutes} min`
   if (minutes < 1440) return `há ${Math.floor(minutes / 60)} h`
-  return `há ${Math.floor(minutes / 1440)} dias`
+  const days = Math.floor(minutes / 1440)
+  return `há ${days} ${days === 1 ? 'dia' : 'dias'}`
 }

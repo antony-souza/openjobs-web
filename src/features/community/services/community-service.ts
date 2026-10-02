@@ -63,7 +63,7 @@ export class ApiError extends Error {
 }
 
 async function request<T>(
-  method: 'get' | 'post' | 'put',
+  method: 'get' | 'post' | 'put' | 'delete',
   url: string,
   body?: unknown,
 ): Promise<T> {
@@ -94,6 +94,12 @@ export const updateProfile = (form: FormData) =>
 export const getMenu = () => request<MenuItem[]>('get', '/v1/users/me/menu')
 export const getFeed = (page: number) =>
   request<Page<Post>>('get', `/v1/community/feed?page=${page}&size=10`)
+export const getMyPosts = (page: number) =>
+  request<Page<Post>>('get', `/v1/community/posts/me?page=${page}&size=10`)
+export const updatePost = (postId: string, form: FormData) =>
+  request<{ message: string }>('put', `/v1/community/posts/${postId}`, form)
+export const deletePost = (postId: string) =>
+  request<{ message: string }>('delete', `/v1/community/posts/${postId}`)
 export const createPost = (form: FormData) =>
   request<{ message: string }>('post', '/v1/community/posts', form)
 export const getComments = (postId: string, page: number) =>

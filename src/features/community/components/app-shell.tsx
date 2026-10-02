@@ -142,6 +142,7 @@ export function AppShell({
               <div className="absolute top-full right-0 mt-3 w-52 rounded-xl border border-[#e5ebf3] bg-white p-2 shadow-xl">
                 <Link
                   to="/perfil"
+                  search={{ section: 'editar' }}
                   className="oj-toplink"
                   onClick={() => setAccountMenu(false)}
                 >

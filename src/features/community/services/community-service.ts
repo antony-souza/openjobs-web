@@ -201,3 +201,9 @@ export const getJobs = (page = 0, search = '', size = 3) =>
   )
 export const applyForJob = (jobId: string) =>
   request<{ message: string }>('post', '/v1/applications', { jobId })
+
+export const getJobCapabilities = () =>
+  request<{ canPublish: boolean }>('get', '/v1/jobs/capabilities')
+
+export const publishJob = (body: { title: string; description: string }) =>
+  request<{ message: string }>('post', '/v1/jobs', body)

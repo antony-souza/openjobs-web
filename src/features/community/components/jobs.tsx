@@ -175,7 +175,7 @@ export function JobsDialog({
   )
 }
 
-function JobDetails({ job }: { job: Job }) {
+export function JobDetails({ job }: { job: Job }) {
   const apply = useMutation({ mutationFn: () => applyForJob(job.id) })
   return (
     <div>

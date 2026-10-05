@@ -27,7 +27,7 @@ const defaultMenus: MenuItem[] = [
   {
     title: 'Explorar vagas',
     iconName: 'BriefcaseBusiness',
-    path: '/home#vagas',
+    path: '/vagas',
   },
   { title: 'Meu perfil', iconName: 'UserRound', path: '/perfil' },
   { title: 'Comunidade', iconName: 'UsersRound', path: '/home#feed' },
@@ -95,7 +95,18 @@ export function AppShell({
       </main>
     )
 
-  const navigation = menus.data?.length ? menus.data : defaultMenus
+  const navigation = (menus.data?.length ? menus.data : defaultMenus)
+    .map((item) => ({
+      ...item,
+      path:
+        item.path === '/home#vagas' || item.path === '/jobs'
+          ? '/vagas'
+          : item.path,
+    }))
+    .filter(
+      (item, index, items) =>
+        items.findIndex((other) => other.path === item.path) === index,
+    )
   return (
     <div className="min-h-dvh bg-[#f5f7fb] text-[#142743]">
       <header className="sticky top-0 z-30 border-b border-[#e5ebf3] bg-white/95 backdrop-blur-lg">
@@ -114,10 +125,14 @@ export function AppShell({
               <Home className="size-4" />
               Início
             </Link>
-            <a className="oj-toplink" href="/home#vagas">
+            <Link
+              className={`oj-toplink ${location.pathname.startsWith('/vagas') ? 'bg-[#edf5ff] text-[#1769d5]' : ''}`}
+              to="/vagas"
+              search={{ busca: '', publicada: false }}
+            >
               <BriefcaseBusiness className="size-4" />
               Vagas
-            </a>
+            </Link>
             <a className="oj-toplink" href="/home#feed">
               <UsersRound className="size-4" />
               Comunidade
@@ -200,7 +215,10 @@ export function AppShell({
           >
             {navigation.map((item) => {
               const Icon = icons[item.iconName] ?? Home
-              const active = item.path === location.pathname
+              const active =
+                item.path === location.pathname ||
+                (item.path === '/vagas' &&
+                  location.pathname.startsWith('/vagas/'))
               return (
                 <a
                   key={item.path}

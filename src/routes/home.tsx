@@ -4,7 +4,7 @@ import { useState } from 'react'
 import loginHero from '../assets/login-hero.png'
 import { AppShell } from '../features/community/components/app-shell'
 import { Feed } from '../features/community/components/feed'
-import { JobsDialog, LatestJobs } from '../features/community/components/jobs'
+import { LatestJobs } from '../features/community/components/jobs'
 import { useSession } from '../features/community/hooks/use-session'
 
 export const Route = createFileRoute('/home')({
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/home')({
 function HomePage() {
   const session = useSession()
   const [search, setSearch] = useState('')
-  const [submittedSearch, setSubmittedSearch] = useState<string | null>(null)
+  const navigate = Route.useNavigate()
   return (
     <AppShell
       session={session}
@@ -40,7 +40,10 @@ function HomePage() {
               method="post"
               onSubmit={(event) => {
                 event.preventDefault()
-                setSubmittedSearch(search.trim())
+                void navigate({
+                  to: '/vagas',
+                  search: { busca: search.trim(), publicada: false },
+                })
               }}
               className="mt-6 flex max-w-[650px] items-center gap-3 rounded-xl border border-white/25 bg-white p-1.5 shadow-lg"
             >
@@ -69,14 +72,15 @@ function HomePage() {
       {session.profile && (
         <div className="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_290px]">
           <Feed profile={session.profile} />
-          <LatestJobs openAll={() => setSubmittedSearch('')} />
+          <LatestJobs
+            openAll={() =>
+              void navigate({
+                to: '/vagas',
+                search: { busca: '', publicada: false },
+              })
+            }
+          />
         </div>
-      )}
-      {submittedSearch !== null && (
-        <JobsDialog
-          search={submittedSearch}
-          close={() => setSubmittedSearch(null)}
-        />
       )}
     </AppShell>
   )

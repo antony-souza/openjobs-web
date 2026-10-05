@@ -14,6 +14,8 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as PUsernameRouteImport } from './routes/p.$username'
+import { Route as VagasIndexRouteImport } from './routes/vagas.index'
+import { Route as VagasPublicarRouteImport } from './routes/vagas.publicar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +42,16 @@ const PUsernameRoute = PUsernameRouteImport.update({
   path: '/p/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VagasIndexRoute = VagasIndexRouteImport.update({
+  id: '/vagas/',
+  path: '/vagas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VagasPublicarRoute = VagasPublicarRouteImport.update({
+  id: '/vagas/publicar',
+  path: '/vagas/publicar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +59,8 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/perfil': typeof PerfilRoute
   '/p/$username': typeof PUsernameRoute
+  '/vagas/publicar': typeof VagasPublicarRoute
+  '/vagas/': typeof VagasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +68,8 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/perfil': typeof PerfilRoute
   '/p/$username': typeof PUsernameRoute
+  '/vagas/publicar': typeof VagasPublicarRoute
+  '/vagas': typeof VagasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +78,37 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/perfil': typeof PerfilRoute
   '/p/$username': typeof PUsernameRoute
+  '/vagas/publicar': typeof VagasPublicarRoute
+  '/vagas/': typeof VagasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cadastro' | '/home' | '/perfil' | '/p/$username'
+  fullPaths:
+    | '/'
+    | '/cadastro'
+    | '/home'
+    | '/perfil'
+    | '/p/$username'
+    | '/vagas/publicar'
+    | '/vagas/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cadastro' | '/home' | '/perfil' | '/p/$username'
-  id: '__root__' | '/' | '/cadastro' | '/home' | '/perfil' | '/p/$username'
+  to:
+    | '/'
+    | '/cadastro'
+    | '/home'
+    | '/perfil'
+    | '/p/$username'
+    | '/vagas/publicar'
+    | '/vagas'
+  id:
+    | '__root__'
+    | '/'
+    | '/cadastro'
+    | '/home'
+    | '/perfil'
+    | '/p/$username'
+    | '/vagas/publicar'
+    | '/vagas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +117,8 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   PerfilRoute: typeof PerfilRoute
   PUsernameRoute: typeof PUsernameRoute
+  VagasPublicarRoute: typeof VagasPublicarRoute
+  VagasIndexRoute: typeof VagasIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +158,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vagas/': {
+      id: '/vagas/'
+      path: '/vagas'
+      fullPath: '/vagas/'
+      preLoaderRoute: typeof VagasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vagas/publicar': {
+      id: '/vagas/publicar'
+      path: '/vagas/publicar'
+      fullPath: '/vagas/publicar'
+      preLoaderRoute: typeof VagasPublicarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +181,8 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   PerfilRoute: PerfilRoute,
   PUsernameRoute: PUsernameRoute,
+  VagasPublicarRoute: VagasPublicarRoute,
+  VagasIndexRoute: VagasIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

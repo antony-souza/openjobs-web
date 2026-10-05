@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { timeAgo } from '../services/community-service'
+import { publicationTimestamp, timeAgo } from '../services/relative-time'
 
 export function RelativeTime({ date }: { date: string }) {
   const [now, setNow] = useState(Date.now)
@@ -8,7 +8,7 @@ export function RelativeTime({ date }: { date: string }) {
     const update = () => {
       const current = Date.now()
       setNow(current)
-      const elapsed = Math.max(0, current - new Date(date).getTime())
+      const elapsed = Math.max(0, current - publicationTimestamp(date))
       const unit =
         elapsed < 60_000
           ? 1000

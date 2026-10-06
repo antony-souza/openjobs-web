@@ -203,7 +203,19 @@ export const applyForJob = (jobId: string) =>
   request<{ message: string }>('post', '/v1/applications', { jobId })
 
 export const getJobCapabilities = () =>
-  request<{ canPublish: boolean }>('get', '/v1/jobs/capabilities')
+  request<{ canPublish: boolean; canManage: boolean; canEdit: boolean }>(
+    'get',
+    '/v1/jobs/capabilities',
+  )
+
+export type MyJob = Omit<Job, 'publishedBy'>
+export const getMyJobs = (page = 0) =>
+  request<Page<MyJob>>('get', `/v1/jobs/mine?page=${page}&size=10`)
+
+export const updateJob = (
+  id: string,
+  body: { title: string; description: string },
+) => request<{ message: string }>('put', `/v1/jobs/${id}`, body)
 
 export const publishJob = (body: { title: string; description: string }) =>
   request<{ message: string }>('post', '/v1/jobs', body)

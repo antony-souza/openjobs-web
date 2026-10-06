@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AtSign,
   Camera,
@@ -18,20 +18,26 @@ import {
 import { AppShell } from '../features/community/components/app-shell'
 import { Avatar } from '../features/community/components/avatar'
 import { Feed } from '../features/community/components/feed'
+import { JobManager } from '../features/community/components/job-manager'
 import { ProfileCover } from '../features/community/components/profile-cover'
 import { ProfileCoverField } from '../features/community/components/profile-cover-field'
 import { ProfileDetailsFields } from '../features/community/components/profile-details-fields'
 import { useSession } from '../features/community/hooks/use-session'
-import { updateProfile } from '../features/community/services/community-service'
+import {
+  getJobCapabilities,
+  updateProfile,
+} from '../features/community/services/community-service'
 import type { Profile } from '../features/community/services/community-service'
 
 export const Route = createFileRoute('/perfil')({
   component: ProfilePage,
   validateSearch: (
     search: Record<string, unknown>,
-  ): { section?: 'editar' | 'publico' } => ({
+  ): { section?: 'editar' | 'publico' | 'vagas' } => ({
     section:
-      search.section === 'editar' || search.section === 'publico'
+      search.section === 'editar' ||
+      search.section === 'publico' ||
+      search.section === 'vagas'
         ? search.section
         : undefined,
   }),
@@ -51,12 +57,18 @@ function ProfileEditor({ profile }: { profile: Profile }) {
   const client = useQueryClient()
   const { section } = Route.useSearch()
   const navigate = Route.useNavigate()
+  const capabilities = useQuery({
+    queryKey: ['job-capabilities', profile.id],
+    queryFn: getJobCapabilities,
+  })
   const tab =
     section === 'editar'
       ? 'information'
       : section === 'publico'
         ? 'public'
-        : 'posts'
+        : section === 'vagas'
+          ? 'jobs'
+          : 'posts'
   const [name, setName] = useState(profile.name)
   const [email, setEmail] = useState(profile.email)
   const [username, setUsername] = useState(profile.username)
@@ -197,6 +209,16 @@ function ProfileEditor({ profile }: { profile: Profile }) {
           >
             Seu perfil público
           </button>
+          {capabilities.data?.canManage && (
+            <button
+              type="button"
+              aria-pressed={tab === 'jobs'}
+              onClick={() => void navigate({ search: { section: 'vagas' } })}
+              className={`shrink-0 cursor-pointer border-b-2 py-4 text-sm font-semibold ${tab === 'jobs' ? 'border-[#1769d5] text-[#1769d5]' : 'border-transparent text-[#71819a]'}`}
+            >
+              Gerenciador de vagas
+            </button>
+          )}
           <Link
             to="/p/$username"
             params={{ username: profile.username }}
@@ -206,6 +228,30 @@ function ProfileEditor({ profile }: { profile: Profile }) {
           </Link>
         </div>
       </section>
+      {tab === 'jobs' &&
+        (capabilities.isPending ? (
+          <p className="text-sm text-[#71819a]">Carregando...</p>
+        ) : capabilities.isError ? (
+          <div className="oj-card p-6">
+            <p role="alert">{capabilities.error.message}</p>
+            <button
+              className="oj-button mt-4"
+              onClick={() => void capabilities.refetch()}
+            >
+              Tentar novamente
+            </button>
+          </div>
+        ) : capabilities.data.canManage ? (
+          <JobManager
+            userId={profile.id}
+            canPublish={capabilities.data.canPublish}
+            canEdit={capabilities.data.canEdit}
+          />
+        ) : (
+          <p className="oj-card p-6">
+            Sua conta não tem permissão para gerenciar vagas.
+          </p>
+        ))}
       {tab === 'posts' && (
         <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
           <Feed profile={profile} scope="profile" />

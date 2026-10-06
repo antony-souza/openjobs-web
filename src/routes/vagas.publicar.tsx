@@ -38,6 +38,7 @@ function PublishJobPage() {
       await Promise.all([
         client.invalidateQueries({ queryKey: ['jobs'] }),
         client.invalidateQueries({ queryKey: ['latest-jobs'] }),
+        client.invalidateQueries({ queryKey: ['my-jobs'] }),
       ])
       void navigate({ to: '/vagas', search: { busca: '', publicada: true } })
     },

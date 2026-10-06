@@ -152,7 +152,7 @@ function PublishJobPage() {
                       className="oj-input min-h-72 resize-y leading-6"
                       value={description}
                       onChange={(event) => setDescription(event.target.value)}
-                      maxLength={1000}
+                      maxLength={3000}
                       required
                       placeholder={
                         'Conte sobre a oportunidade.\n\n• Responsabilidades\n• Requisitos\n• Benefícios\n• Local e modelo de trabalho'
@@ -167,7 +167,7 @@ function PublishJobPage() {
                         Inclua as informações que ajudam a pessoa a decidir.
                       </span>
                       <span className="shrink-0">
-                        {description.length}/1000
+                        {description.length}/3000
                       </span>
                     </div>
                   </div>

@@ -202,11 +202,22 @@ export const getJobs = (page = 0, search = '', size = 3) =>
 export const applyForJob = (jobId: string) =>
   request<{ message: string }>('post', '/v1/applications', { jobId })
 
-export const getJobCapabilities = () =>
-  request<{ canPublish: boolean; canManage: boolean; canEdit: boolean }>(
-    'get',
-    '/v1/jobs/capabilities',
-  )
+async function checkJobCapability(action: 'publish' | 'edit') {
+  try {
+    return await request<boolean>('get', `/v1/jobs/capabilities/${action}`)
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 403) return false
+    throw error
+  }
+}
+
+export async function getJobCapabilities() {
+  const [canPublish, canEdit] = await Promise.all([
+    checkJobCapability('publish'),
+    checkJobCapability('edit'),
+  ])
+  return { canPublish, canEdit, canManage: canPublish || canEdit }
+}
 
 export type MyJob = Omit<Job, 'publishedBy'>
 export const getMyJobs = (page = 0) =>

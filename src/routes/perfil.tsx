@@ -41,7 +41,7 @@ export const Route = createFileRoute('/perfil')({
         ? search.section
         : undefined,
   }),
-  head: () => ({ meta: [{ title: 'Open Jobs | Meu perfil' }] }),
+  head: () => ({ meta: [{ title: 'Open Jobs 1 | Meu perfil' }] }),
 })
 
 function ProfilePage() {

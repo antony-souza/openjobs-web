@@ -36,12 +36,12 @@ export const Route = createFileRoute('/perfil')({
   ): { section?: 'editar' | 'publico' | 'vagas' } => ({
     section:
       search.section === 'editar' ||
-      search.section === 'publico' ||
-      search.section === 'vagas'
+        search.section === 'publico' ||
+        search.section === 'vagas'
         ? search.section
         : undefined,
   }),
-  head: () => ({ meta: [{ title: 'Open Jobs 1 | Meu perfil' }] }),
+  head: () => ({ meta: [{ title: 'Open Jobs | Meu perfil' }] }),
 })
 
 function ProfilePage() {
